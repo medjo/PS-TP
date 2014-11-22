@@ -78,21 +78,10 @@ void efface_ecran(void)
 /*traite un caractère donné (c'est à dire l'affiche si c'est un caractère normal ou implante l'effet voulu si c'est un caractère de contrôle) */
 void traite_car(char c)
 {
-
-    uint16_t place = 0;
-	uint8_t pos = 0;
-        /*envoye la commande 0x0F sur le port de commande (0x3D4) pour indiquer à la carte que l'on va recevoir la partie basse de la position du curseur*/
-	outb(0x0F, 0x3D4);
-	/*revoit cette partie basse sur le port de données (0x3D5)*/
-	pos = inb(0x3D5);
-	/*envoye la commande 0x0E sur le port de commande pour signaler qu'on recoit maintenant la partie haute*/
-	outb(0x0E, 0x3D4);
-	/*recoit la partie haute de la position sur le port de données. */
-	place = inb(0x3D5);
-    place = place << 8;/*met les 8bits de la partie haute de la position du curseur dans la partie haute de la variable place*/
-    place |= pos;/*met la partie basse de la position dans place grace à un ou bit a bit*/
-    uint32_t col = place % 80;
-    uint32_t lig = (place - col) / 80 ;
+    uint32_t col = 0;
+    uint32_t lig = 0 ;
+    uint32_t place = 0;
+    get_cursor(&lig, &col);
 	if(c > 31 && c < 127)
 	{
 		ecrit_car(lig, col,c,0,0,15);
@@ -168,4 +157,23 @@ void console_putbytes(char *chaine, int32_t taille)
         traite_car(chaine[i]);
         i++;
     }
+}
+
+//lis la position du curseur et mets à l'adresse lig la valeur de la ligne et à l'adresse col la valeur de la colonne 
+void get_cursor(uint32_t *lig, uint32_t *col)
+{
+    uint16_t place = 0;
+	uint8_t pos = 0;
+    /*envoye la commande 0x0F sur le port de commande (0x3D4) pour indiquer à la carte que l'on va recevoir la partie basse de la position du curseur*/
+	outb(0x0F, 0x3D4);
+	/*revoit cette partie basse sur le port de données (0x3D5)*/
+	pos = inb(0x3D5);
+	/*envoye la commande 0x0E sur le port de commande pour signaler qu'on recoit maintenant la partie haute*/
+	outb(0x0E, 0x3D4);
+	/*recoit la partie haute de la position sur le port de données. */
+	place = inb(0x3D5);
+    place = place << 8;/*met les 8bits de la partie haute de la position du curseur dans la partie haute de la variable place*/
+    place |= pos;/*met la partie basse de la position dans place grace à un ou bit a bit*/
+    *col = place % 80;
+    *lig = (place - *col) / 80 ;
 }

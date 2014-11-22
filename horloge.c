@@ -21,14 +21,16 @@ uint32_t hh = 0, mm = 0, ss = 0;
 /*prend en paramètre une chaine de caractères et l'affiche en haut à droite de l'écran : c'est cette fonction qui sera appelée par le traitant d'interruption quand on devra mettre à jour l'affichage de l'heure*/
 void afficher_l0_c72(char *str)
 {
+    uint32_t lig, col;
+    get_cursor(&lig, &col);
     place_curseur(0, 72);
     printf("%s", str);
+    place_curseur(lig, col);
 }
 
 /*Traitement d'Interruptions : acquittement de l'interruption et partie gérant l'affichage*/
 void tic_PIT(void)
 {
-    //cli(); 
     outb(0x20, 0x20);
     if (time % clock_freq == 0)
     {
@@ -38,24 +40,11 @@ void tic_PIT(void)
         ss %= 60;
         mm %= 60;
         hh %= 100;
-        /*ss++;
-        if (ss == 60)
-        {
-            ss %= 60;
-            mm++;
-            if (mm == 60)
-            {
-                mm %= 60;
-                hh++;
-            }
-
-        }*/
     }
     time++;
     sprintf(heure, "%02d:%02d:%02d", hh, mm, ss);
     afficher_l0_c72(heure);
     ordonnance();
-    //sti();
 }
 
 /*initialiser l'entrée 32 dans la table des vecteurs d'interruptions*/

@@ -9,5 +9,6 @@ void place_curseur(uint32_t lig, uint32_t col);
 void efface_ecran(void);
 void traite_car(char c);
 void defilement(void);
+void get_cursor(uint32_t *lig, uint32_t *col);
 
 #endif

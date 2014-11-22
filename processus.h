@@ -22,7 +22,8 @@ enum state
 {
     ELU,
     ACTIVABLE,
-    ENDORMI
+    ENDORMI,
+    MORT
 };
 
 typedef enum state State;
@@ -52,4 +53,6 @@ int32_t mon_pid(void);
 char *mon_nom(void);
 void dors(uint32_t nbr_secs);
 uint32_t nbr_secondes();
+void fin_processus();
+void affiche_etats(void);
 #endif

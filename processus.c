@@ -1,4 +1,7 @@
 #include <processus.h>
+#include <horloge.h>
+#include <ecran.h>
+
 int32_t latest_pid = 0;
 extern uint32_t clock_freq;
 
@@ -14,29 +17,32 @@ void idle()
 
 void proc1(void)
 {
-    for (;;)
+    for (uint32_t i = 0 ; i < 2 ; i++)
     {
         printf("[temps = %u] processus %s pid = %i\n", nbr_secondes(), mon_nom(), mon_pid());
         dors(2);
     }
+    fin_processus();
 }
 
 void proc2(void)
 {
-    for (;;)
+    for (uint32_t i = 0 ; i < 2 ; i++)
     {
         printf("[temps = %u] processus %s pid = %i\n", nbr_secondes(), mon_nom(), mon_pid());
         dors(3);
     }
+    fin_processus();
 }
 
 void proc3(void)
 {
-    for (;;)
+    for (uint32_t i = 0 ; i < 2 ; i++)
     {
         printf("[temps = %u] processus %s pid = %i\n", nbr_secondes(), mon_nom(), mon_pid());
         dors(5);
     }
+    fin_processus();
 }
 
 uint32_t nbr_secondes()
@@ -75,13 +81,15 @@ void init_proc(Process *proc, int p_pid, char *p_name, State p_state)
 void ordonnance(void)
 {
     int previous = actif->pid;
-    //actif->state = ACTIVABLE;
+    if ( actif->state == ELU )
+         actif->state = ACTIVABLE;
     actif = &proc_table[(actif->pid + 1) % NB_PROCESSES];
-    while ( (actif->state == ENDORMI) && (actif->ttw > time) && (actif->pid != previous) )
+    while ( ((actif->state == ENDORMI) && (actif->ttw > time)) || actif->state == MORT )
     {
         actif = &proc_table[(actif->pid + 1) % NB_PROCESSES];
     }
     actif->state = ELU;
+    affiche_etats();
     ctx_sw(proc_table[previous].reg, proc_table[actif->pid].reg);
 
 }
@@ -98,19 +106,58 @@ char *mon_nom(void)
 
 void dors(uint32_t nbr_secs)
 {
-    /*
-       uint32_t nbr_mm = mm;
-       uint32_t nbr_hh = hh;
-       nbr_secs += ss;
-       nbr_mm += nbr_secs / 60;
-       nbr_hh += nbr_mm / 60;
-       nbr_secs %= 60;
-       nbr_mm %= 60;
-       nbr_hh %= 100;
-       sprintf(actif->ttw, "%02d:%02d:%02d", nbr_hh, nbr_mm, nbr_secs);*/
-    
     cli();
     actif->state = ENDORMI;
     actif->ttw = time + (nbr_secs * clock_freq);
     sti();
+    ordonnance();
+}
+
+void fin_processus()
+{
+    cli();
+    actif->state = MORT;
+    sti();
+    ordonnance();
+}
+
+void affiche_etats(void)
+{
+    int i = 0;
+    int l = 2;
+    uint32_t col = 0;
+    uint32_t lig = 0 ;
+    get_cursor(&lig, &col);
+
+   while (i < NB_PROCESSES)
+   {
+        place_curseur(l, 60);
+        if( proc_table[i].state == ENDORMI )
+        {
+            printf("                   ");
+            place_curseur(l, 60);
+            printf("%s : ENDORMI", proc_table[i].name);
+        }
+        else if ( proc_table[i].state == ELU )
+        {
+            printf("                   ");
+            place_curseur(l, 60);
+            printf("%s : ELU", proc_table[i].name);
+        }
+        else if ( proc_table[i].state == MORT )
+        {
+            printf("                   ");
+            place_curseur(l, 60);
+            printf("%s : MORT", proc_table[i].name);
+        }
+        else if ( proc_table[i].state == ACTIVABLE )
+        {
+            printf("                   ");
+            place_curseur(l, 60);
+            printf("%s : ACTIVABLE", proc_table[i].name);
+        }
+       i++;
+       l++;
+   }
+    place_curseur(lig, col);
 }

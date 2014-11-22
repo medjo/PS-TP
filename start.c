@@ -13,28 +13,23 @@ char *heure = "00:00:00";
 
 void kernel_start(void)
 {
-    //initialisations
-    //     ...
-    /*On désactive les interruptions pour la séance 3 */ /*
+    //initialisations pour les interruptions d'horloge
     init_traitant_IT(32, traitant_IT_32);
     set_clock_freq();
     masque_IRQ(0, false);
 
     
     // démasquage des interruptions externes
-    sti();
-*/
+    //sti();
+
     //initialisation des structures de processus
     printf("\f");//efface l'écran
     Process s_idle;
-    //Process s_proc1;
     proc_table[0] = s_idle;
-    //proc_table[1] = s_proc1;
-    //init_proc(proc_table + 1, 1, "proc1", ACTIVABLE);
     init_proc(proc_table, 0, "idle", ELU);
     cree_processus( proc1, "proc1");
-    cree_processus( proc1, "proc2");
-    cree_processus( proc1, "proc3");
+    cree_processus( proc2, "proc2");
+    cree_processus( proc3, "proc3");
 
     //Début de la Pile à STACK_SIZE-1
     //proc_table[1].reg[I_ESP] = (int) &proc_table[1].stack[STACK_SIZE - 1];

@@ -15,7 +15,7 @@ uint16_t *ptr_mem(uint32_t lig, uint32_t col)
 }
 
 /*écrit le caractère c aux coordonnées spécifiées*/
-void ecrit_car(uint32_t lig, uint32_t col, char c, char cl, char cf, char ct)
+void ecrit_car(uint32_t lig, uint32_t col, char c, uint32_t cl, uint32_t cf, uint32_t ct)
 {
 	uint16_t *ptr = ptr_mem(lig, col);
 	*ptr = c |(cl << 15) | (cf << 12) | (ct<<8) ;

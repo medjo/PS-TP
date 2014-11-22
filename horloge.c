@@ -1,4 +1,5 @@
 #include "horloge.h"
+#include <processus.h>
 extern uint32_t time;
 extern uint32_t clock_freq;
 extern char *heure;
@@ -27,12 +28,17 @@ void afficher_l0_c72(char *str)
 /*Traitement d'Interruptions : acquittement de l'interruption et partie gérant l'affichage*/
 void tic_PIT(void)
 {
+    //cli(); 
     outb(0x20, 0x20);
-    
-    if (time == clock_freq)
+    if (time % clock_freq == 0)
     {
-        time = 0;
         ss++;
+        mm += ss / 60;
+        hh += mm / 60;
+        ss %= 60;
+        mm %= 60;
+        hh %= 100;
+        /*ss++;
         if (ss == 60)
         {
             ss %= 60;
@@ -43,19 +49,17 @@ void tic_PIT(void)
                 hh++;
             }
 
-        }
+        }*/
     }
-    else
-        time++;
-    /*mm = (time / (60 * 60 * clock_freq)) % 60;
-    ss = (time / (60 * clock_freq)) % 60;
-    hh = (time / ( 60 * 60 * 60 * clock_freq)) % 100;*/
+    time++;
     sprintf(heure, "%02d:%02d:%02d", hh, mm, ss);
     afficher_l0_c72(heure);
+    ordonnance();
+    //sti();
 }
 
 /*initialiser l'entrée 32 dans la table des vecteurs d'interruptions*/
-void init_traitant_IT(int32_t num_IT, void (*traitant)(void))
+void init_traitant_IT(uint32_t num_IT, void (*traitant)(void))
 {
     uint32_t *num_case = 0;
     uint32_t entree_idt = KERNEL_CS;

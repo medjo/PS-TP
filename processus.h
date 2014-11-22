@@ -15,6 +15,8 @@
 #define I_EDI 4
 extern void *malloc(size_t size);
 extern void ctx_sw(int *reg1, int *reg2);
+extern uint32_t hh, mm, ss;
+extern uint32_t time;
 
 enum state
 {
@@ -32,6 +34,7 @@ struct process
     State state;
     int reg[5];//tableau de sauvegarde des 5 registres principaux
     int *stack[STACK_SIZE];
+    uint32_t ttw ;//Time To Wake up
 };
 
 
@@ -47,4 +50,6 @@ void init_proc(Process *proc, int p_pid, char *p_name, State p_state);
 void ordonnance(void);
 int32_t mon_pid(void);
 char *mon_nom(void);
+void dors(uint32_t nbr_secs);
+uint32_t nbr_secondes();
 #endif

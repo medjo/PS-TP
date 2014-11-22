@@ -12,7 +12,7 @@
 
 void afficher_l0_c72(char *str);
 void tic_PIT(void);
-void init_traitant_IT(int32_t num_IT, void (*traitant)(void));
+void init_traitant_IT(uint32_t num_IT, void (*traitant)(void));
 void set_clock_freq();
 void masque_IRQ(uint32_t num_IRQ, bool masque);
 #endif

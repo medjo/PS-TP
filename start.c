@@ -5,6 +5,12 @@
 #include <horloge.h>
 #include <processus.h>
 
+/*
+J'ai fait ce TP tout seul. Mais il m'est arrivé de trouver des solutions
+suite à des discussions avec mes camarades et les professeurs
+*/
+
+
 uint32_t time = 0;
 uint32_t clock_freq = 50;/*Fréquence de l'horloge en Hertz*/
 extern void traitant_IT_32();

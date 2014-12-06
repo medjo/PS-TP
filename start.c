@@ -24,17 +24,14 @@ void kernel_start(void)
 
     //initialisation des structures de processus
     printf("\f");//efface l'écran
-    Process s_idle;
-    proc_table[0] = s_idle;
     init_proc(proc_table, 0, "idle", ELU);
-    cree_processus( proc1, "proc1");
-    cree_processus( proc2, "proc2");
-    cree_processus( proc3, "proc3");
 
-    //Début de la Pile à STACK_SIZE-1
-    //proc_table[1].reg[I_ESP] = (int) &proc_table[1].stack[STACK_SIZE - 1];
-    //proc_table[1].stack[STACK_SIZE - 1] = (int *)proc1;
-    
+    //Création dynamique de processus : les trois fonctions suivantes sont appelées par les processus eux-mêmes:
+    //cree_processus( proc1, "proc1");
+    //cree_processus( proc2, "proc2");
+    //cree_processus( proc3, "proc3");
+
+        
     //demarrage du processus par défaut
     actif = &proc_table[0];
     idle();

@@ -41,17 +41,20 @@ void place_curseur(uint32_t lig, uint32_t col)
 
 	/*envoye la commande 0x0F sur le port de commande (0x3D4) pour indiquer à la carte que l'on va envoyer la partie basse de la position du curseur*/
 	outb(0x0F, 0x3D4);
+
 	/*envoye cette partie basse sur le port de données (0x3D5)*/
 	uint8_t value = pos;
 	outb(value, 0x3D5);
+
 	/*envoye la commande 0x0E sur le port de commande pour signaler qu'on envoie maintenant la partie haute*/
 	outb(0x0E, 0x3D4);
+
 	/*envoye la partie haute de la position sur le port de données. */
 	value = pos >> 8;
 	outb(value, 0x3D5);
 }
 
-/*efface l'écran*/
+/*efface l'écran en écrivant des espaces partout*/
 void efface_ecran(void)
 {
 	uint32_t lig = 0;
@@ -133,7 +136,6 @@ void traite_car(char c)
         
         
     }
-//		ecrit_car(lig, uint32_t col, char c, char cl, char cf, char ct)
 }
 
 /*fait remonter d'une ligne l'affichage à l'écran*/

@@ -61,16 +61,12 @@ void init_traitant_IT(uint32_t num_IT, void (*traitant)(void))
     entree_idt <<= 16;
     ad_traitant &= 0x0000FFFF;
     entree_idt |= ad_traitant;
-    //num_case[2 * num_IT] = entree_idt;
     *num_case = entree_idt;
 
     /*ecriture du deuxième mot de l'entrée*/
     ad_traitant = (uint32_t)traitant;
     ad_traitant &= 0xFFFF0000;
     entree_idt = ad_traitant | 0x00008E00;
-    //num_case = 0;
-    //num_case += 0x1000/4;/*Division par 4 pour avoir num_case = 0x1000*/
-    //num_case +=  1;/*Idem que ligne précédente*/
     num_case[1] = entree_idt;
 
 
@@ -104,6 +100,7 @@ void masque_IRQ(uint32_t num_IRQ, bool masque)
     {
         uint8_t set_bit_IRQ = 1;
         set_bit_IRQ <<= num_IRQ;
+
         /*Met à 1 le num_IRQ bit de masque actuel*/
         masque_actuel |= set_bit_IRQ;
         outb(masque_actuel, 0x21);
@@ -113,6 +110,7 @@ void masque_IRQ(uint32_t num_IRQ, bool masque)
         uint8_t reset_bit_IRQ = 1;
         reset_bit_IRQ <<= num_IRQ;
         reset_bit_IRQ ^= 0xFF;
+
         /*Met à 0 le num_IRQ bit de masque actuel*/
         masque_actuel &= reset_bit_IRQ;
         outb(masque_actuel, 0x21);

@@ -18,6 +18,7 @@ extern void ctx_sw(int *reg1, int *reg2);
 extern uint32_t hh, mm, ss;
 extern uint32_t time;
 
+//États des processus
 enum state
 {
     ELU,
@@ -31,8 +32,9 @@ typedef enum state State;
 struct process
 {
     int pid;
+    //char name[NAME_SIZE]; 
     char *name; 
-    State state;
+    State state;//État du processus
     int reg[5];//tableau de sauvegarde des 5 registres principaux
     int *stack[STACK_SIZE];
     uint32_t ttw ;//Time To Wake up
